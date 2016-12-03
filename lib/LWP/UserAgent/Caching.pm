@@ -18,6 +18,11 @@ use HTTP::Caching;
             driver          => 'File',
             root_dir        => '/tmp/LWP_UserAgent_Caching',
             file_extension  => '.cache',
+        },
+        cache_meta      => {
+            driver          => 'File',
+            root_dir        => '/tmp/LWP_UserAgent_Caching',
+            file_extension  => '.cache',
             l1_cache        => {
                 driver          => 'Memory',
                 global          => 1,
@@ -42,7 +47,7 @@ or a bit simpler:
 
     
     my $ua = LWP::UserAgent::Caching->new;
-    my $resp = $ua->get( 'http://example.com/cached?');
+    my $resp = $ua->get( 'http://example.com/cached?' );
     
 
 =cut
@@ -50,20 +55,61 @@ or a bit simpler:
 sub new {
     my ( $class, %params ) = @_;
 
-    $self = SUPER::new(@_);
+    $self = $class->SUPER::new(@_);
 
     $self->{http_caching} = HTTP::Caching->new(
-        cache                   => %params{cache},
-        cache_type              => %params{cache_type} || 'private',
-        cache_control_request   => %params{cache_control},
-        forwarder               => sub { SUPER::request(shift) }
+        cache                   => $params{cache},
+        cache_meta              => $params{cache_meta} || $params{cache},
+        cache_type              => $params{cache_type} || 'private',
+#       cache_control_request   => $params{cache_control},
+        forwarder               => sub { $self->SUPER::request(@_) }
     );
 
     return $self;
 }
 
 sub request {
-    return shift->{http_caching}->request(@_);
+    return shift->{http_caching}->make_request(@_);
 }
+
+
+#
+# Now the shortcuts...
+#
+sub get {
+    require HTTP::Request::Common;
+    my($self, @parameters) = @_;
+    my @suff = $self->_process_colonic_headers(\@parameters,1);
+    return $self->request( HTTP::Request::Common::GET( @parameters ), @suff );
+}
+
+sub post {
+    require HTTP::Request::Common;
+    my($self, @parameters) = @_;
+    my @suff = $self->_process_colonic_headers(\@parameters, (ref($parameters[1]) ? 2 : 1));
+    return $self->request( HTTP::Request::Common::POST( @parameters ), @suff );
+}
+
+sub head {
+    require HTTP::Request::Common;
+    my($self, @parameters) = @_;
+    my @suff = $self->_process_colonic_headers(\@parameters,1);
+    return $self->request( HTTP::Request::Common::HEAD( @parameters ), @suff );
+}
+
+sub put {
+    require HTTP::Request::Common;
+    my($self, @parameters) = @_;
+    my @suff = $self->_process_colonic_headers(\@parameters, (ref($parameters[1]) ? 2 : 1));
+    return $self->request( HTTP::Request::Common::PUT( @parameters ), @suff );
+}
+
+sub delete {
+    require HTTP::Request::Common;
+    my($self, @parameters) = @_;
+    my @suff = $self->_process_colonic_headers(\@parameters,1);
+    return $self->request( HTTP::Request::Common::DELETE( @parameters ), @suff );
+}
+
 
 1;
