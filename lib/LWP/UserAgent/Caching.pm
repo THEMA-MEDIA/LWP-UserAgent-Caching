@@ -74,7 +74,7 @@ L<HTTP::Caching> The RFC 7234 compliant brains
 sub new {
     my ( $class, %params ) = @_;
 
-    $self = $class->SUPER::new(@_);
+    my $self = $class->SUPER::new(@_);
 
     $self->{http_caching} = HTTP::Caching->new(
         cache                   => $params{cache},
