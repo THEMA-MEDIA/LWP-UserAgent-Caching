@@ -2,9 +2,14 @@ package LWP::UserAgent::Caching;
 
 =head1 NAME
 
-LWP::UserAgent::Caching
+LWP::UserAgent::Caching - HTTP::Casing based UserAgent, finally done right
 
 =cut
+
+our $VERSION = '0.01';
+
+use strict;
+use warnings;
 
 use parent 'LWP::UserAgent';
 use HTTP::Caching;
@@ -43,12 +48,26 @@ use HTTP::Caching;
     
     my $resp = $ua->request($rqst);
 
-or a bit simpler:
 
-    
-    my $ua = LWP::UserAgent::Caching->new;
-    my $resp = $ua->get( 'http://example.com/cached?' );
-    
+=head1 DESCRIPTION
+
+C<LWP::UserAgent::Caching> gives you RFC compliant caching. It respects the old
+HTTP/1 headerfields like 'Expires' but also implements the HTTP/1.1
+'Cache-Control' directives.
+
+Unlike many other cachng useragents, this one does actually invalidate the cache
+after a non-error response returned by a non-safe request (like DELETE).
+
+=head1 METHODS
+
+Since it's a subclass of the standard LWP::UserAgent, it inherrits all those. In
+this module we also implemented the shortcuts from L<HTTP::Request::Common> so
+that tehy will not call the parrent class
+
+=head1 SEE ALSO
+
+L<HTTP::Caching> The RFC 7234 compliant brains
+- DO NEVER USE THAT MODULE DIRECTLY
 
 =cut
 

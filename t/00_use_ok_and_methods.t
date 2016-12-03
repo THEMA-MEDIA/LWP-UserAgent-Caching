@@ -1,9 +1,6 @@
 use Test::Most tests => 3;
 use Test::MockObject;
 
-use HTTP::Request;
-use HTTP::Response;
-
 subtest 'LWP::UserAgent::Caching' => sub {
     plan tests => 1;
     use_ok('LWP::UserAgent::Caching');
