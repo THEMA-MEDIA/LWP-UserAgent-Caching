@@ -6,7 +6,7 @@ LWP::UserAgent::Caching - HTTP::Casing based UserAgent, finally done right
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.05';
 
 use strict;
 use warnings;
@@ -18,27 +18,27 @@ use HTTP::Caching;
 
     use LWP::UserAgent::Caching;
     
+    my $cache = CHI->new(
+        driver              => 'File',
+        root_dir            => '/tmp/LWP_UserAgent_Caching',
+        file_extension      => '.cache',
+        l1_cache            => {
+            driver              => 'Memory',
+            global              => 1,
+            max_size            => 1024*1024
+        },
+    );
+    
     my $ua = LWP::UserAgent::Caching->new(
-        cache           => {
-            driver          => 'File',
-            root_dir        => '/tmp/LWP_UserAgent_Caching',
-            file_extension  => '.cache',
+        http_caching => {
+            cache               => $cache,
+            type                => 'private',
+            request_directives  => (
+                'max-age=86400',            # 24hrs
+                'min-fresh=60',             # not over due within the next minute
+            ),
         },
-        cache_meta      => {
-            driver          => 'File',
-            root_dir        => '/tmp/LWP_UserAgent_Caching',
-            file_extension  => '.cache',
-            l1_cache        => {
-                driver          => 'Memory',
-                global          => 1,
-                max_size        => 1024*1024
-            }
-        },
-        cache_type      => 'private',
-        cache_control   => (
-            'max-age=86400',            # 24hrs
-            'min-fresh=60',             # not over due within the next minute
-        )
+        # more LWP::UserAgent options
     );
     
     my $rqst = HTTP::Request->new( GET => 'http://example.com' );
@@ -74,13 +74,15 @@ L<HTTP::Caching> The RFC 7234 compliant brains
 sub new {
     my ( $class, %params ) = @_;
 
+    my $http_caching = delete $params{http_caching} || {};
+
     my $self = $class->SUPER::new(@_);
 
     $self->{http_caching} = HTTP::Caching->new(
-        cache                   => $params{cache},
-        cache_meta              => $params{cache_meta} || $params{cache},
-        cache_type              => $params{cache_type} || 'private',
-#       cache_control_request   => $params{cache_control},
+        cache                   => $http_caching->{cache},
+#       cache_meta              => $http_caching->{cache_meta} || $params{cache},
+        cache_type              => $http_caching->{type} || 'private',
+        cache_control_request   => $http_caching->{request_directives},
         forwarder               => sub { $self->SUPER::request(@_) }
     );
 
@@ -88,6 +90,7 @@ sub new {
 }
 
 sub request {
+    $_[1]->headers->user_agent( $_[0]->agent ); # FIX: only set during request
     return shift->{http_caching}->make_request(@_);
 }
 

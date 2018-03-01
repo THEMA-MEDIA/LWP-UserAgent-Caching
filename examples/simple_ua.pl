@@ -19,11 +19,13 @@ my $chi_cache_meta = CHI->new(
 );
 
 my $ua = LWP::UserAgent::Caching->new(
-    cache           => $chi_cache,
-#   cache_meta      => $chi_cache_meta,
+    http_caching => {
+        cache           => $chi_cache,
+    #   cache_meta      => $chi_cache_meta,
+    },
 );
 
-# $HTTP::Caching::DEBUG = 1;
+$HTTP::Caching::DEBUG = 1;
 
 my $method  = shift;
 my $url     = shift;
@@ -36,7 +38,7 @@ print "\n#####\n";
 
     my $resp = $ua->get($url);
     print $resp->headers->as_string;
-    exit
+#    exit
 }
 
 my $http_request = HTTP::Request->new( $method, $url );

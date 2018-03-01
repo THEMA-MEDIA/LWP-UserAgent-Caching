@@ -18,8 +18,10 @@ subtest 'Instantiating LWP::UserAgent::Caching object' => sub {
     
     my $ua_caching =
     new_ok('LWP::UserAgent::Caching', [
-            cache                   => $mocked_cache,
-            cache_control           => 'max-age=3600',
+            http_caching => {
+                cache                   => $mocked_cache,
+                request_directives      => 'max-age=3600',
+            }
         ] , 'my $ua_caching'
     );
     
@@ -30,8 +32,10 @@ subtest 'LWP::UserAgent::Caching request' => sub {
     
     my $ua_caching = eval {
         LWP::UserAgent::Caching->new(
-            cache                   => $mocked_cache,
-            cache_control           => 'max-age=3600',
+            http_caching => {
+                cache                   => $mocked_cache,
+                request_directives      => 'max-age=3600',
+            }
         )
     };
     
