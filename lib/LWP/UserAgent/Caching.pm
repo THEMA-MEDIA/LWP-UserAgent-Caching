@@ -60,9 +60,9 @@ after a non-error response returned by a non-safe request (like DELETE).
 
 =head1 METHODS
 
-Since it's a subclass of the standard LWP::UserAgent, it inherrits all those. In
+Since it's a subclass of the standard LWP::UserAgent, it inherits all those. In
 this module we also implemented the shortcuts from L<HTTP::Request::Common> so
-that tehy will not call the parrent class
+that they will not call the parent class
 
 =head1 SEE ALSO
 
