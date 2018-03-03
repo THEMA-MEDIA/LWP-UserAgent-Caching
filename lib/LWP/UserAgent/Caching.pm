@@ -90,8 +90,10 @@ sub new {
 }
 
 sub request {
-    $_[1]->headers->user_agent( $_[0]->agent ); # FIX: only set during request
-    return shift->{http_caching}->make_request(@_);
+    my $self = shift;
+    my $rqst = shift->clone;
+    $self->prepare_request($rqst);
+    return $self->{http_caching}->make_request($rqst, @_);
 }
 
 
