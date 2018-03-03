@@ -1,6 +1,8 @@
 use LWP::UserAgent::Caching;
 use CHI;
 
+# use LWP::ConsoleLogger::Everywhere;
+
 my $chi_cache = CHI->new(
     driver          => 'File',
     root_dir        => '/tmp/LWP_UserAgent_Caching',
@@ -22,8 +24,12 @@ my $ua = LWP::UserAgent::Caching->new(
     http_caching => {
         cache           => $chi_cache,
     #   cache_meta      => $chi_cache_meta,
+        request_directives => "no-transform, add-on-top=true, max-stale", # uhm ... no-transform ???
     },
 );
+
+$ua->default_header('X-Module' => __PACKAGE__ );
+$ua->default_header('Cache-Control' => 'unknown' );
 
 $HTTP::Caching::DEBUG = 1;
 
@@ -35,14 +41,8 @@ print "\n#####\n";
 print "\nGETTING\n";
 print "\n#####\n";
 
-
-    my $resp = $ua->get($url);
+    my $resp = $ua->get($url, 'Cache-Control' => 'min-fresh=30' );
     print $resp->headers->as_string;
-#    exit
+    print "\n";
+    print $resp->request()->headers()->as_string;
 }
-
-my $http_request = HTTP::Request->new( $method, $url );
-
-my $http_response = $ua->request($http_request);
-
-print $http_response->headers->as_string;
