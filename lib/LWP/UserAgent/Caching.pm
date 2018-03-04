@@ -6,7 +6,7 @@ LWP::UserAgent::Caching - HTTP::Casing based UserAgent, finally done right
 
 =cut
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use strict;
 use warnings;

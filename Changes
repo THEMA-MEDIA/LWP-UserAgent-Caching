@@ -1,5 +1,10 @@
 Revision history for LWP::UserAgent::Caching
 
+0.07  2018-03-04 VANHOESEL
+
+      [ Merge pull request #3 from manwar/add-changes-file ]
+      - Proposed Changes file.
+
 0.06  2018-03-03 VANHOESEL
 
       [ Merge pull request #2 from THEMA-MEDIA/include_default_headers ]
