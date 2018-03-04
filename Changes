@@ -1,0 +1,19 @@
+Revision history for LWP::UserAgent::Caching
+
+0.06  2018-03-03 VANHOESEL
+      - Merge pull request #2 from THEMA-MEDIA/include_default_headers
+
+0.05  2018-03-01 VANHOESEL
+      - Merge pull request #1 from manwar/minor-typo-in-pod
+
+0.04  2016-12-22 VANHOESEL
+      - N/A
+
+0.03  2016-12-19 VANHOESEL
+      - N/A
+
+0.02  2016-12-03 VANHOESEL
+      - Adding basic tests and shortcuts for COMMON methods
+
+0.01  2016-12-03 VANHOESEL
+      - First draft released.
